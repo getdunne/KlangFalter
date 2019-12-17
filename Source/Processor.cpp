@@ -436,12 +436,14 @@ void Processor::getStateInformation (MemoryBlock& destData)
 
 void Processor::setStateInformation (const void* data, int sizeInBytes)
 {
-  auto element = getXmlFromBinary(data, sizeInBytes);
-  if (element)
-  {
-    const juce::File irDirectory = _settings.getImpulseResponseDirectory();
-    LoadState(irDirectory, *element, *this);
-  }
+    auto element = getXmlFromBinary(data, sizeInBytes);
+    if (element)
+    {
+        juce::File irDirectory = _settings.getImpulseResponseDirectory();
+        if (element->hasAttribute("irDirectory"))
+            irDirectory = juce::File(element->getStringAttribute("irDirectory"));
+        LoadState(irDirectory, *element, *this);
+    }
 }
 
 
