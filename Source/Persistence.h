@@ -24,7 +24,7 @@
 
 
 XmlElement* SaveState(const File& irDirectory, Processor& processor);
-bool LoadState(const File& irDirectory, XmlElement& element, Processor& processor);
+bool LoadState(std::vector<juce::File>& irDirectoryList, XmlElement& element, Processor& processor);
 
 
 #endif // Header guard

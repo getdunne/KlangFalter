@@ -439,10 +439,11 @@ void Processor::setStateInformation (const void* data, int sizeInBytes)
     auto element = getXmlFromBinary(data, sizeInBytes);
     if (element)
     {
-        juce::File irDirectory = _settings.getImpulseResponseDirectory();
+        std::vector<juce::File> irDirectoryList;
         if (element->hasAttribute("irDirectory"))
-            irDirectory = juce::File(element->getStringAttribute("irDirectory"));
-        LoadState(irDirectory, *element, *this);
+            irDirectoryList.push_back(juce::File(element->getStringAttribute("irDirectory")));
+        irDirectoryList.push_back(_settings.getImpulseResponseDirectory());
+        LoadState(irDirectoryList, *element, *this);
     }
 }
 

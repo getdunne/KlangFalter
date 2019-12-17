@@ -124,7 +124,7 @@ XmlElement* SaveState(const File& irDirectory, Processor& processor)
 
 
 
-bool LoadState(const File& irDirectory, XmlElement& element, Processor& processor)
+bool LoadState(std::vector<juce::File>& irDirectoryList, XmlElement& element, Processor& processor)
 {  
   if (element.getTagName() != "Convolution")
   {
@@ -207,8 +207,15 @@ bool LoadState(const File& irDirectory, XmlElement& element, Processor& processo
   for (auto it=irConfigurations.begin(); it!=irConfigurations.end(); ++it)
   {
     IRAgent* irAgent = it->_irAgent;
-    const File irFile = irDirectory.getChildFile(it->_file);
-    irAgent->setFile(irFile, it->_fileChannel);
+    for (auto irDir : irDirectoryList)
+    {
+        const File irFile = irDir.getChildFile(it->_file);
+        if (irFile.existsAsFile())
+        {
+            irAgent->setFile(irFile, it->_fileChannel);
+            break;
+        }
+    }
   }  
   return true;
 }
