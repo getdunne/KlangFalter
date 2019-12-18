@@ -23,8 +23,8 @@
 #include "Processor.h"
 
 
-XmlElement* SaveState(const File& irDirectory, Processor& processor);
-bool LoadState(std::vector<juce::File>& irDirectoryList, XmlElement& element, Processor& processor);
+XmlElement* SaveState(const File& irDirectory, const File& unifyLibsDirectory, Processor& processor);
+bool LoadState(const File& irDirectory, const File& unifyLibsDirectory, XmlElement& element, Processor& processor);
 
 
 #endif // Header guard

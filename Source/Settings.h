@@ -35,7 +35,10 @@ public:
 
   juce::File getImpulseResponseDirectory();
   void setImpulseResponseDirectory(const juce::File& directory);
-  
+
+  juce::File getUnifyLibrariesDirectory();
+  void setUnifyLibrariesDirectory(const juce::File& directory);
+
   enum ResultLevelMeterDisplay
   {
     Wet,

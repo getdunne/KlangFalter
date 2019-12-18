@@ -15,12 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ==================================================================================
 
-#ifndef _IRBROWSERCOMPONENT_H
-#define _IRBROWSERCOMPONENT_H
-
-
+#pragma once
 #include "JuceHeader.h"
-
 #include "../Processor.h"
 #include "../Settings.h"
 
@@ -30,44 +26,45 @@ class IRBrowserComponent : public juce::Component,
                            public juce::ChangeListener
 {
 public:
-  IRBrowserComponent();
-  virtual ~IRBrowserComponent();
-  
-  virtual void init(Processor* processor);
-  virtual void updateLayout();
-  
-  virtual void paint(juce::Graphics& g);
-  virtual void resized();
-  
-  virtual void selectionChanged();
-  virtual void fileClicked(const juce::File &file, const juce::MouseEvent &e);
- 	virtual void fileDoubleClicked(const juce::File &file);
- 	virtual void browserRootChanged(const juce::File &newRoot);
+    IRBrowserComponent();
+    virtual ~IRBrowserComponent();
 
-  virtual void changeListenerCallback(juce::ChangeBroadcaster* source);
-  
+    virtual void init(Processor* processor);
+    virtual void updateLayout();
+
+    virtual void paint(juce::Graphics& g);
+    virtual void resized();
+
+    virtual void selectionChanged();
+    virtual void fileClicked(const juce::File& file, const juce::MouseEvent& e);
+    virtual void fileDoubleClicked(const juce::File& file);
+    virtual void browserRootChanged(const juce::File& newRoot);
+
+    virtual void changeListenerCallback(juce::ChangeBroadcaster* source);
+
 private:
-  bool readAudioFileInfo(const juce::File& file, size_t& channelCount, size_t& sampleCount, double& sampleRate) const;
+    bool readAudioFileInfo(const juce::File& file, size_t& channelCount, size_t& sampleCount, double& sampleRate) const;
 
-  typedef std::vector<std::pair<juce::File, size_t> > TrueStereoPairs;
-  TrueStereoPairs findTrueStereoPairs(const juce::File& file, size_t sampleCount, double sampleRate) const;
-  juce::File checkMatchingTrueStereoFile(const juce::String& fileNameBody,
-                                         const juce::String& fileNameExt,
-                                         const juce::File& directory,
-                                         const juce::String& pattern,
-                                         const juce::String& replacement,
-                                         const size_t sampleCount,
-                                         const double sampleRate) const;
+    typedef std::vector<std::pair<juce::File, size_t> > TrueStereoPairs;
+    TrueStereoPairs findTrueStereoPairs(const juce::File& file, size_t sampleCount, double sampleRate) const;
+    juce::File checkMatchingTrueStereoFile(const juce::String& fileNameBody,
+        const juce::String& fileNameExt,
+        const juce::File& directory,
+        const juce::String& pattern,
+        const juce::String& replacement,
+        const size_t sampleCount,
+        const double sampleRate) const;
 
-  std::unique_ptr<juce::TimeSliceThread> _timeSliceThread;
-  std::unique_ptr<juce::FileFilter> _fileFilter;
-  std::unique_ptr<juce::DirectoryContentsList> _directoryContent;
-  std::unique_ptr<juce::FileTreeComponent> _fileTreeComponent;
-  std::unique_ptr<juce::Label> _infoLabel;
-  Processor* _processor;
-  
-  IRBrowserComponent(const IRBrowserComponent&);
-  IRBrowserComponent& operator=(const IRBrowserComponent&);
+    juce::ComboBox _libraryCombo;
+    std::vector<juce::File> _irFolders;
+
+    std::unique_ptr<juce::TimeSliceThread> _timeSliceThread;
+    std::unique_ptr<juce::FileFilter> _fileFilter;
+    std::unique_ptr<juce::DirectoryContentsList> _directoryContent;
+    std::unique_ptr<juce::FileTreeComponent> _fileTreeComponent;
+    std::unique_ptr<juce::Label> _infoLabel;
+    Processor* _processor;
+
+    IRBrowserComponent(const IRBrowserComponent&);
+    IRBrowserComponent& operator=(const IRBrowserComponent&);
 };
-
-#endif // Header guard

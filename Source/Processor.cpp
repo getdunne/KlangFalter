@@ -425,12 +425,13 @@ AudioProcessorEditor* Processor::createEditor()
 //==============================================================================
 void Processor::getStateInformation (MemoryBlock& destData)
 {
-  const juce::File irDirectory = _settings.getImpulseResponseDirectory();
-  std::unique_ptr<juce::XmlElement> element(SaveState(irDirectory, *this));
-  if (element)
-  {
-    copyXmlToBinary(*element, destData);
-  }
+    const juce::File irDirectory = _settings.getImpulseResponseDirectory();
+    const juce::File unifyLibsDir = _settings.getUnifyLibrariesDirectory();
+    std::unique_ptr<juce::XmlElement> element(SaveState(irDirectory, unifyLibsDir, *this));
+    if (element)
+    {
+        copyXmlToBinary(*element, destData);
+    }
 }
 
 
@@ -439,11 +440,9 @@ void Processor::setStateInformation (const void* data, int sizeInBytes)
     auto element = getXmlFromBinary(data, sizeInBytes);
     if (element)
     {
-        std::vector<juce::File> irDirectoryList;
-        if (element->hasAttribute("irDirectory"))
-            irDirectoryList.push_back(juce::File(element->getStringAttribute("irDirectory")));
-        irDirectoryList.push_back(_settings.getImpulseResponseDirectory());
-        LoadState(irDirectoryList, *element, *this);
+        const juce::File irDirectory = _settings.getImpulseResponseDirectory();
+        const juce::File unifyLibsDir = _settings.getUnifyLibrariesDirectory();
+        LoadState(irDirectory, unifyLibsDir, *element, *this);
     }
 }
 

@@ -31,6 +31,7 @@ namespace Internal
   struct IRAgentConfiguration
   {
     IRAgent* _irAgent;
+    bool _unifyPath;
     String _file;
     int _fileChannel;
     double _stretch;
@@ -67,7 +68,7 @@ namespace Internal
 
 
 
-XmlElement* SaveState(const File& irDirectory, Processor& processor)
+XmlElement* SaveState(const File& irDirectory, const File& unifyLibsDirectory, Processor& processor)
 { 
   ScopedPointer<XmlElement> convolutionElement(new XmlElement("Convolution"));
   convolutionElement->setAttribute("pluginVersion", juce::String(ProjectInfo::versionString));
@@ -113,7 +114,14 @@ XmlElement* SaveState(const File& irDirectory, Processor& processor)
     XmlElement* irElement = new XmlElement("ImpulseResponse");
     irElement->setAttribute("input", static_cast<int>(irAgent->getInputChannel()));
     irElement->setAttribute("output", static_cast<int>(irAgent->getOutputChannel()));
-    irElement->setAttribute("file", irFile.getRelativePathFrom(irDirectory));
+
+    if (irFile.getFullPathName().startsWith(unifyLibsDirectory.getFullPathName()))
+    {
+        irElement->setAttribute("file", irFile.getRelativePathFrom(unifyLibsDirectory));
+        irElement->setAttribute("unifyPath", true);
+    }
+    else
+        irElement->setAttribute("file", irFile.getRelativePathFrom(irDirectory));
     irElement->setAttribute("fileChannel", static_cast<int>(irAgent->getFileChannel()));
     convolutionElement->addChildElement(irElement);
   }
@@ -124,7 +132,7 @@ XmlElement* SaveState(const File& irDirectory, Processor& processor)
 
 
 
-bool LoadState(std::vector<juce::File>& irDirectoryList, XmlElement& element, Processor& processor)
+bool LoadState(const File& irDirectory, const File& unifyLibsDirectory, XmlElement& element, Processor& processor)
 {  
   if (element.getTagName() != "Convolution")
   {
@@ -175,6 +183,7 @@ bool LoadState(std::vector<juce::File>& irDirectoryList, XmlElement& element, Pr
     }
     Internal::IRAgentConfiguration configuration;
     configuration._irAgent = irAgent;
+    configuration._unifyPath = irElement->getBoolAttribute("unifyPath");
     configuration._file = irElement->getStringAttribute("file", {});
     configuration._fileChannel = irElement->getIntAttribute("fileChannel", -1);
     irConfigurations.push_back(configuration);
@@ -207,15 +216,8 @@ bool LoadState(std::vector<juce::File>& irDirectoryList, XmlElement& element, Pr
   for (auto it=irConfigurations.begin(); it!=irConfigurations.end(); ++it)
   {
     IRAgent* irAgent = it->_irAgent;
-    for (auto irDir : irDirectoryList)
-    {
-        const File irFile = irDir.getChildFile(it->_file);
-        if (irFile.existsAsFile())
-        {
-            irAgent->setFile(irFile, it->_fileChannel);
-            break;
-        }
-    }
+    const File irFile = it->_unifyPath ? unifyLibsDirectory.getChildFile(it->_file) : irDirectory.getChildFile(it->_file);
+    irAgent->setFile(irFile, it->_fileChannel);
   }  
   return true;
 }

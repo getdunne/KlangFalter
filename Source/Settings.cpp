@@ -115,6 +115,35 @@ void Settings::setImpulseResponseDirectory(const juce::File& directory)
 }
 
 
+juce::File Settings::getUnifyLibrariesDirectory()
+{
+    juce::PropertiesFile* propertiesFile = _properties.getUserSettings();
+    if (propertiesFile)
+    {
+        const juce::File dir = juce::File::createFileWithoutCheckingPath(propertiesFile->getValue("UnifyLibrariesDirectory", juce::String()));
+        if (dir.exists() && dir.isDirectory())
+        {
+            return dir;
+        }
+    }
+    return juce::File();
+}
+
+
+void Settings::setUnifyLibrariesDirectory(const juce::File& directory)
+{
+    if (directory.exists() && directory.isDirectory())
+    {
+        juce::PropertiesFile* propertiesFile = _properties.getUserSettings();
+        if (propertiesFile)
+        {
+            propertiesFile->setValue("UnifyLibrariesDirectory", directory.getFullPathName());
+            propertiesFile->saveIfNeeded();
+        }
+    }
+}
+
+
 Settings::ResultLevelMeterDisplay Settings::getResultLevelMeterDisplay()
 {
   ResultLevelMeterDisplay resultDisplay = Out;
