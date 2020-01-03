@@ -10,7 +10,8 @@
               pluginRTASCategory="" companyName="HiFi-LoFi" aaxIdentifier="com.hifi-lofi.KlangFalter"
               pluginAAXCategory="2" buildAAX="0" buildVST3="0" pluginIsMidiEffectPlugin="0"
               includeBinaryInAppConfig="1" buildAUv3="0" pluginFormats="buildVST"
-              projectLineFeed="&#10;" buildStandalone="0" enableIAA="0" defines="JUCE_USE_CUSTOM_PLUGIN_STANDALONE_APP">
+              projectLineFeed="&#10;" buildStandalone="0" enableIAA="0" defines="JUCE_USE_CUSTOM_PLUGIN_STANDALONE_APP"
+              version="1.1.0">
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" objCExtraSuffix="C54DO8" extraCompilerFlags=""
                extraFrameworks="Accelerate" extraDefs="AUDIOFFT_APPLE_ACCELERATE=1">
