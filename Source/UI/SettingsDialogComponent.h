@@ -41,7 +41,6 @@ private:
     Label* _tailBlockSizePrefixLabel;
     Label* _tailBlockSizeLabel;
     TextButton* _selectIRDirectoryButton;
-    TextButton* _unifyLibDirectoryButton;
     Image cachedImage_hifilofi_jpg;
 
     // (prevent copy constructor and operator= being generated..)

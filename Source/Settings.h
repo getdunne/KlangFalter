@@ -36,8 +36,7 @@ public:
   juce::File getImpulseResponseDirectory();
   void setImpulseResponseDirectory(const juce::File& directory);
 
-  juce::File getUnifyLibrariesDirectory();
-  void setUnifyLibrariesDirectory(const juce::File& directory);
+  juce::File getUnifyLibrariesDirectory() { return unifyLibsDir; }
 
   enum ResultLevelMeterDisplay
   {
@@ -57,6 +56,8 @@ public:
 
 private:
   juce::ApplicationProperties _properties;
+
+  juce::File unifyLibsDir;
 
   Settings(const Settings&);
   Settings& operator=(const Settings&);

@@ -22,7 +22,6 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
       _tailBlockSizePrefixLabel (0),
       _tailBlockSizeLabel (0),
       _selectIRDirectoryButton (0),
-      _unifyLibDirectoryButton(0),
       cachedImage_hifilofi_jpg (Image())
 {
     addAndMakeVisible(_irDirectoryGroupComponent = new GroupComponent({}, L"Impulse Response Folders"));
@@ -155,16 +154,11 @@ SettingsDialogComponent::SettingsDialogComponent (Processor& processor)
     _selectIRDirectoryButton->setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
     _selectIRDirectoryButton->addListener(this);
 
-    addAndMakeVisible(_unifyLibDirectoryButton = new TextButton);
-    _unifyLibDirectoryButton->setButtonText(L"UNIFY Libraries Folder...");
-    _unifyLibDirectoryButton->setConnectedEdges(Button::ConnectedOnLeft | Button::ConnectedOnRight);
-    _unifyLibDirectoryButton->addListener(this);
-
     cachedImage_hifilofi_jpg = ImageCache::getFromMemory(hifilofi_jpg, hifilofi_jpgSize);
 
     setSize(500, 480);
 
-    _nameVersionLabel->setText(ProjectInfo::projectName + juce::String(" - Version ") + ProjectInfo::versionString, juce::sendNotification);
+    _nameVersionLabel->setText(ProjectInfo::projectName + juce::String(" - UNIFY Version ") + ProjectInfo::versionString, juce::sendNotification);
     _juceVersionLabel->setText(juce::SystemStats::getJUCEVersion(), juce::sendNotification);
     _numberInputsLabel->setText(juce::String(_processor.getTotalNumInputChannels()), juce::sendNotification);
     _numberOutputsLabel->setText(juce::String(_processor.getTotalNumOutputChannels()), juce::sendNotification);
@@ -194,7 +188,6 @@ SettingsDialogComponent::~SettingsDialogComponent()
     deleteAndZero (_tailBlockSizePrefixLabel);
     deleteAndZero (_tailBlockSizeLabel);
     deleteAndZero (_selectIRDirectoryButton);
-    deleteAndZero (_unifyLibDirectoryButton);
 }
 
 void SettingsDialogComponent::paint (Graphics& g)
@@ -250,8 +243,6 @@ void SettingsDialogComponent::resized()
     groupBox.removeFromTop(10);
     groupBox.reduce(20, 20);
     _selectIRDirectoryButton->setBounds(groupBox.removeFromTop(24));
-    groupBox.removeFromTop(10);
-    _unifyLibDirectoryButton->setBounds(groupBox.removeFromTop(24));
 }
 
 void SettingsDialogComponent::buttonClicked (Button* buttonThatWasClicked)
@@ -263,15 +254,6 @@ void SettingsDialogComponent::buttonClicked (Button* buttonThatWasClicked)
         if (chooser.browseForDirectory())
         {
             _processor.getSettings().setImpulseResponseDirectory(chooser.getResult());
-        }
-    }
-    else if (buttonThatWasClicked == _unifyLibDirectoryButton)
-    {
-        File oldDir = _processor.getSettings().getUnifyLibrariesDirectory();
-        FileChooser chooser("Locate Unify Libraries folder", oldDir);
-        if (chooser.browseForDirectory())
-        {
-            _processor.getSettings().setUnifyLibrariesDirectory(chooser.getResult());
         }
     }
 }

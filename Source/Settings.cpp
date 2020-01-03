@@ -21,19 +21,33 @@
 Settings::Settings() :
   _properties()
 {
-  juce::PropertiesFile::Options fileOptions;
-  fileOptions.applicationName = "KlangFalter";
-  fileOptions.filenameSuffix = "settings";
+    // Unify-specific KlangFalter gets Unify Libraries folder path directly from Unify settings file
+    juce::PropertiesFile::Options fileOptions;
+    fileOptions.applicationName = "Unify";
+    fileOptions.filenameSuffix = ".settings";
+    fileOptions.folderName = "PlugInGuru";
+    fileOptions.osxLibrarySubFolder = "Application Support";
+    PropertiesFile unifyProps(fileOptions);
+
+    String updatedDataDirPath = unifyProps.getValue("dataDirectoryPath");
+    if (updatedDataDirPath.isNotEmpty())
+        unifyLibsDir = File(updatedDataDirPath).getChildFile("Libraries");
+    else
+        unifyLibsDir = File::getSpecialLocation(File::commonDocumentsDirectory).getChildFile("PlugInGuru/Unify/Libraries");
+    
+    // Now here is the original KlangFalter code, which opens KlangFalter's own settings file
+    fileOptions.applicationName = "KlangFalter";
+    fileOptions.filenameSuffix = "settings";
 #ifdef JUCE_LINUX 
-  fileOptions.folderName = ".config/KlangFalter";
+    fileOptions.folderName = ".config/KlangFalter";
 #else
-  fileOptions.folderName = "KlangFalter";
+    fileOptions.folderName = "KlangFalter";
 #endif
-  fileOptions.osxLibrarySubFolder = "Application Support"; // Recommended by Apple resp. the Juce documentation
-  fileOptions.commonToAllUsers = false;
-  fileOptions.ignoreCaseOfKeyNames = false;
-  fileOptions.storageFormat = juce::PropertiesFile::storeAsXML;
-  _properties.setStorageParameters(fileOptions);
+    fileOptions.osxLibrarySubFolder = "Application Support"; // Recommended by Apple resp. the Juce documentation
+    fileOptions.commonToAllUsers = false;
+    fileOptions.ignoreCaseOfKeyNames = false;
+    fileOptions.storageFormat = juce::PropertiesFile::storeAsXML;
+    _properties.setStorageParameters(fileOptions);
 }
 
 
@@ -112,35 +126,6 @@ void Settings::setImpulseResponseDirectory(const juce::File& directory)
       propertiesFile->saveIfNeeded();
     }
   }
-}
-
-
-juce::File Settings::getUnifyLibrariesDirectory()
-{
-    juce::PropertiesFile* propertiesFile = _properties.getUserSettings();
-    if (propertiesFile)
-    {
-        const juce::File dir = juce::File::createFileWithoutCheckingPath(propertiesFile->getValue("UnifyLibrariesDirectory", juce::String()));
-        if (dir.exists() && dir.isDirectory())
-        {
-            return dir;
-        }
-    }
-    return juce::File();
-}
-
-
-void Settings::setUnifyLibrariesDirectory(const juce::File& directory)
-{
-    if (directory.exists() && directory.isDirectory())
-    {
-        juce::PropertiesFile* propertiesFile = _properties.getUserSettings();
-        if (propertiesFile)
-        {
-            propertiesFile->setValue("UnifyLibrariesDirectory", directory.getFullPathName());
-            propertiesFile->saveIfNeeded();
-        }
-    }
 }
 
 
