@@ -184,7 +184,7 @@ bool LoadState(const File& irDirectory, const File& unifyLibsDirectory, XmlEleme
     Internal::IRAgentConfiguration configuration;
     configuration._irAgent = irAgent;
     configuration._unifyPath = irElement->getBoolAttribute("unifyPath");
-    configuration._file = irElement->getStringAttribute("file", {});
+    configuration._file = irElement->getStringAttribute("file", {}).replaceCharacter('\\', '/');
     configuration._fileChannel = irElement->getIntAttribute("fileChannel", -1);
     irConfigurations.push_back(configuration);
   }
